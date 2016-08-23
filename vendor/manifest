@@ -57,12 +57,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/lestrrat/go-apache-logformat",
-			"repository": "https://github.com/lestrrat/go-apache-logformat",
-			"revision": "e774e429884c94b2cda0d499397d36d306ba0dee",
-			"branch": "master"
-		},
-		{
 			"importpath": "github.com/magiconair/properties",
 			"repository": "https://github.com/magiconair/properties",
 			"revision": "61b492c03cf472e0c6419be5899b8e0dc28b1b88",
@@ -96,12 +90,6 @@
 			"importpath": "github.com/pkg/sftp",
 			"repository": "https://github.com/pkg/sftp",
 			"revision": "a71e8f580e3b622ebff585309160b1cc549ef4d2",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/smartystreets/go-aws-auth",
-			"repository": "https://github.com/smartystreets/go-aws-auth",
-			"revision": "2043e6d0bb7e4c18464a7bba562acbe482e3cabd",
 			"branch": "master"
 		},
 		{
