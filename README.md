@@ -54,8 +54,7 @@ description "AWS Proxy"
 start on runlevel [2345]
 
 respawn
-respawn limit 3 30
-post-stop exec sleep 5
+respawn limit 10 5
 
 exec /path/to/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
 ```
