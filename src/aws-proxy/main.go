@@ -108,13 +108,11 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 		// will succeed via curl but fail from the browser.
 		req.Header.Set("Connection", "close")
 
+		// Read the credentials and sign the request.
+		// TODO Don't parse this on every request. There has to be a more
+		// efficient way to do this unless the SDK is already smart.
 		sess := session.New()
 		signer := v4.NewSigner(sess.Config.Credentials)
-
-		//		"github.com/aws/aws-sdk-go/aws"
-		//		signer.Logger = aws.NewDefaultLogger()
-		//		signer.Debug = aws.LogDebugWithSigning
-
 		signer.Sign(req, body, service, region, time.Now())
 	}
 
