@@ -108,6 +108,14 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 		// will succeed via curl but fail from the browser.
 		req.Header.Set("Connection", "close")
 
+		// Remove all x-forwarded-* headers.
+		// https://github.com/acquia/aws-proxy/issues/4
+		for header, _ := range req.Header {
+			if strings.HasPrefix(strings.ToLower(header), "x-forwarded-") {
+				req.Header.Del(header)
+			}
+		}
+
 		// Read the credentials and sign the request.
 		// TODO Don't parse this on every request. There has to be a more
 		// efficient way to do this unless the SDK is already smart.
