@@ -30,7 +30,7 @@ file, the CLI configuration file, and instance profile credentials. See
 http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-metadata
 for more details.
 
-Run the proxy:
+Run the proxy, replacing `my-domain` and `us-west-2` according to your environment.
 
 ```shell
 ./bin/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
@@ -41,4 +41,31 @@ Consume the service with tools like `curl`:
 ```shell
 curl http://localhost:9200
 ```
+
+### Running With Upstart
+
+Use [Upstart](http://upstart.ubuntu.com/) to start aws-proxy during boot
+and supervise it while the system is running. Add a file to `/etc/init` with
+the following contents, replacing `/path/to` and `my-domain` according to
+your environment.
+
+```
+description "AWS Proxy"
+start on runlevel [2345]
+
+respawn
+respawn limit 3 30
+post-stop exec sleep 5
+
+exec /path/to/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
+```
+
+## Alternate projects
+
+We aren't in the business of pushing tools, so you should also look at the
+projects below so that you can make the best decision for your use case.
+
+* https://github.com/coreos/aws-auth-proxy
+* https://github.com/cllunsford/aws-signing-proxy
+* https://github.com/anomalizer/ngx_aws_auth
 
