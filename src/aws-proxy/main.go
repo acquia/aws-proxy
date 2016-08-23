@@ -89,12 +89,40 @@ func ParseEndpointUrl(url *url.URL) (service, region string, err error) {
 
 // ReverseProxy modifies the request by signing it with the v4 signature.
 func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
+	targetQuery := url.RawQuery
+
 	director := func(req *http.Request) {
 
-		// Rewrite the request to desired server host.
 		req.URL.Scheme = url.Scheme
 		req.URL.Host = url.Host
 		req.Host = url.Host
+
+		// Handle ES and Kibana quirks If we try to reverse proxy only the
+		// /_plugin/kibana path.
+		// https://github.com/acquia/aws-proxy/issues/2
+		if service == "es" && strings.HasPrefix(url.Path, "/_plugin/kibana") {
+			switch {
+			case req.URL.Path == "/_nodes":
+			case strings.HasPrefix(req.URL.Path, "/.kibana-4"):
+			case strings.HasSuffix(req.URL.Path, "/_mapping/field/*"):
+			case strings.HasSuffix(req.URL.Path, "/_msearch"):
+				// Don't rewrite the path.
+			default:
+				req.URL.Path = singleJoiningSlash(url.Path, req.URL.Path)
+			}
+		} else {
+			req.URL.Path = singleJoiningSlash(url.Path, req.URL.Path)
+		}
+
+		if targetQuery == "" || req.URL.RawQuery == "" {
+			req.URL.RawQuery = targetQuery + req.URL.RawQuery
+		} else {
+			req.URL.RawQuery = targetQuery + "&" + req.URL.RawQuery
+		}
+		if _, ok := req.Header["User-Agent"]; !ok {
+			// explicitly disable User-Agent so it's not set to default value
+			req.Header.Set("User-Agent", "")
+		}
 
 		// We need the body to be an io.ReadSeeker to calculate the hash. We
 		// do this via the method below, however ioutil.ReadAll() empties
@@ -127,4 +155,16 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 	return &httputil.ReverseProxy{
 		Director: director,
 	}
+}
+
+func singleJoiningSlash(a, b string) string {
+	aslash := strings.HasSuffix(a, "/")
+	bslash := strings.HasPrefix(b, "/")
+	switch {
+	case aslash && bslash:
+		return a + b[1:]
+	case !aslash && !bslash:
+		return a + "/" + b
+	}
+	return a + b
 }
