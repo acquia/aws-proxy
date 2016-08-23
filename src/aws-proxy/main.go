@@ -8,12 +8,14 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/aws/signer/v4"
+	"github.com/gorilla/handlers"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -58,7 +60,7 @@ func main() {
 	// Run the reverse proxy.
 	port := strconv.Itoa(conf.GetInt("port"))
 	handler := ReverseProxy(url, region, service)
-	http.ListenAndServe(":"+port, handler)
+	http.ListenAndServe(":"+port, handlers.CombinedLoggingHandler(os.Stdout, handler))
 }
 
 // ParseEndpointUrl parses the service and region from the endpoint.

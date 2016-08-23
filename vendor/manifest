@@ -33,6 +33,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/gorilla/handlers",
+			"repository": "https://github.com/gorilla/handlers",
+			"revision": "a5775781a543af3c6b9f5baf10995e4d14168950",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/hashicorp/hcl",
 			"repository": "https://github.com/hashicorp/hcl",
 			"revision": "baeb59c710717b06aac1dbe2270e8192ec593244",
@@ -48,6 +54,12 @@
 			"importpath": "github.com/kr/fs",
 			"repository": "https://github.com/kr/fs",
 			"revision": "2788f0dbd16903de03cb8186e5c7d97b69ad387b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/lestrrat/go-apache-logformat",
+			"repository": "https://github.com/lestrrat/go-apache-logformat",
+			"revision": "e774e429884c94b2cda0d499397d36d306ba0dee",
 			"branch": "master"
 		},
 		{
