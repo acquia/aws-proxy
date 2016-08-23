@@ -2,7 +2,7 @@
 
 This app reverse proxies entry points for Amazon web services. Proxied
 requests are signed using the [v4 signature](http://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
-which allows direct access to the entry point with tools such as curl
+which allows direct access to the endpoint with tools such as `curl`
 without having to sign the requests.
 
 The primary use case for this app is proxying [Amazon Elasticsearch Service](https://aws.amazon.com/elasticsearch-service/)
