@@ -66,7 +66,6 @@ func main() {
 // ParseEndpointUrl parses the service and region from the endpoint.
 // http://docs.aws.amazon.com/general/latest/gr/rande.html
 func ParseEndpointUrl(url *url.URL) (service, region string, err error) {
-
 	parts := strings.Split(url.Host, ".")
 	size := len(parts)
 
@@ -74,8 +73,8 @@ func ParseEndpointUrl(url *url.URL) (service, region string, err error) {
 		service = parts[2]
 		region = parts[1]
 	} else if size == 4 {
-		service = parts[1]
-		region = parts[0]
+		service = parts[0]
+		region = parts[1]
 	} else if size == 3 {
 		service = parts[0]
 		region = "us-east-1"
