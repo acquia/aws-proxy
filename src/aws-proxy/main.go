@@ -93,12 +93,18 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 
 	director := func(req *http.Request) {
 
+		// Routes URLs to the scheme and host of the entry point.
 		req.URL.Scheme = url.Scheme
 		req.URL.Host = url.Host
 		req.Host = url.Host
 
-		// Handle ES and Kibana quirks If we try to reverse proxy only the
-		// /_plugin/kibana path.
+		// Routes URLs to the base path of the endpoint.
+		//
+		// Handle ES and Kibana quirks. Kibana is installed as a plugin and
+		// is accessible via the /_plugin/kibana path, however it also
+		// reaches back to the root path to make Elasticsearch queries.
+		// Therefore we have to whitelise some of these paths for Kibnan to
+		// function properly.
 		// https://github.com/acquia/aws-proxy/issues/2
 		if service == "es" && strings.HasPrefix(url.Path, "/_plugin/kibana") {
 			switch {
@@ -114,6 +120,8 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 			req.URL.Path = singleJoiningSlash(url.Path, req.URL.Path)
 		}
 
+		// Stolen from the httputil.NewSingleHostReverseProxy function.
+		// https://golang.org/src/net/http/httputil/reverseproxy.go
 		if targetQuery == "" || req.URL.RawQuery == "" {
 			req.URL.RawQuery = targetQuery + req.URL.RawQuery
 		} else {
@@ -132,11 +140,17 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 		body := bytes.NewReader(buf)
 		req.Body = ioutil.NopCloser(body)
 
-		// Turn keep-alive off. If we don't do this then proxied requests
-		// will succeed via curl but fail from the browser.
+		// If we don't set the Connection header's value to "closed", then
+		// proxied requests sent via the browser will fail due to a
+		// signature mismatch. The reason is that AWS always expects the
+		// value of this header to be "closed" and generates the hash using
+		// that value regardless of what is sent in the request.
 		req.Header.Set("Connection", "close")
 
-		// Remove all x-forwarded-* headers.
+		// Remove all x-forwarded-* headers, as they cn cause a signature
+		// mismatch. For example, AWS expects the x-forwarded-for header to
+		// be the public IP of he EC2 instance, even if the request has
+		// x-forwarded-for set for the IP that made the initial request.
 		// https://github.com/acquia/aws-proxy/issues/4
 		for header, _ := range req.Header {
 			if strings.HasPrefix(strings.ToLower(header), "x-forwarded-") {
@@ -146,7 +160,7 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 
 		// Read the credentials and sign the request.
 		// TODO Don't parse this on every request. There has to be a more
-		// efficient way to do this unless the SDK is already smart.
+		// efficient way to do this unless the SDK is already being smart.
 		sess := session.New()
 		signer := v4.NewSigner(sess.Config.Credentials)
 		signer.Sign(req, body, service, region, time.Now())
@@ -157,6 +171,8 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 	}
 }
 
+// Stolen from the httputil.singleJoiningSlash function.
+// https://golang.org/src/net/http/httputil/reverseproxy.go
 func singleJoiningSlash(a, b string) string {
 	aslash := strings.HasSuffix(a, "/")
 	bslash := strings.HasPrefix(b, "/")

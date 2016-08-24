@@ -42,6 +42,25 @@ Consume the service with tools like `curl`:
 curl http://localhost:9200
 ```
 
+#### Proxying Kibana from the document root
+
+If you just want to proxy Kibana and serve it from the document root, add
+the Kibana plugin's path to the endpoint:
+
+```shell
+./bin/aws-proxy --port 5601 --endpoint=https://my-domain.us-west-2.es.amazonaws.com/_plugin/kibana
+```
+
+Be aware that there is some magic behind the scenes to make this possible.
+Participate in https://github.com/acquia/aws-proxy/issues/6, pull back the
+curtain, and make things less magical.
+
+##### Securing Kibana
+
+You probably don't want to expose Kibana to the world, so check out
+[Bitly's Oauth2 Proxy](https://github.com/bitly/oauth2_proxy) and set the
+AWS Proxy as its upstream endpoint.
+
 ### Running With Upstart
 
 Use [Upstart](http://upstart.ubuntu.com/) to start aws-proxy during boot
