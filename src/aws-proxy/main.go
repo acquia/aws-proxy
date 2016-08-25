@@ -37,6 +37,10 @@ func init() {
 	conf.BindPFlag("port", pflag.Lookup("port"))
 	conf.SetDefault("port", 3000)
 
+	pflag.BoolP("behind-reverse-proxy", "b", false, "Set this flag if the proxy is being run behind another")
+	conf.BindPFlag("behind-reverse-proxy", pflag.Lookup("behind-reverse-proxy"))
+	conf.SetDefault("behind-reverse-proxy", false)
+
 	pflag.Parse()
 }
 
@@ -57,10 +61,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Build the reverse proxy handler chain.
+	var handler http.Handler
+	proxy := ReverseProxy(url, region, service)
+	if conf.GetBool("behind-reverse-proxy") {
+		handler = handlers.CombinedLoggingHandler(os.Stdout, handlers.ProxyHeaders(proxy))
+	} else {
+		handler = handlers.CombinedLoggingHandler(os.Stdout, proxy)
+	}
+
 	// Run the reverse proxy.
 	port := strconv.Itoa(conf.GetInt("port"))
-	handler := ReverseProxy(url, region, service)
-	http.ListenAndServe(":"+port, handlers.CombinedLoggingHandler(os.Stdout, handler))
+	http.ListenAndServe(":"+port, handler)
 }
 
 // ParseEndpointUrl parses the service and region from the endpoint.
@@ -102,7 +114,7 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 		// Handle ES and Kibana quirks. Kibana is installed as a plugin and
 		// is accessible via the /_plugin/kibana path, however it also
 		// reaches back to the root path to make Elasticsearch queries.
-		// Therefore we have to whitelise some of these paths for Kibnan to
+		// Therefore we have to whitelist some of these paths for Kibana to
 		// function properly.
 		// https://github.com/acquia/aws-proxy/issues/2
 		if service == "es" && strings.HasPrefix(url.Path, "/_plugin/kibana") {
