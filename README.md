@@ -61,6 +61,10 @@ You probably don't want to expose Kibana to the world, so check out
 [Bitly's Oauth2 Proxy](https://github.com/bitly/oauth2_proxy) and set the
 AWS Proxy as its upstream endpoint.
 
+If you do put AWS Proxy behind another reverse proxy, make sure to pass the
+`--behind-reverse-proxy` option so that the IP of the host that made the
+original request is logged.
+
 ### Running With Upstart
 
 Use [Upstart](http://upstart.ubuntu.com/) to start aws-proxy during boot
