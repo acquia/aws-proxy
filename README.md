@@ -15,12 +15,10 @@ library and borrows some core techniques.
 
 ## Installation
 
-This project uses the [GB build tool](https://getgb.io/). Assuming that GB
-is installed, run the following command in the project's root directory to
-build the `aws-proxy` binary:
+Run the following command in the project's root to build the aws-proxy binary:
 
 ```shell
-gb build
+GOPATH=$PWD go build -o ./bin/aws-proxy aws-proxy
 ```
 
 ## Usage
