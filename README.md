@@ -80,6 +80,17 @@ respawn limit 10 5
 exec /path/to/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
 ```
 
+## Development
+
+AWS Proxy uses [Glide](https://glide.sh/) to manage dependencies.
+
+Run the following commands to generate a coverage report:
+
+```shell
+GOPATH=$PWD go test -coverprofile=coverage.out aws-proxy
+GOPATH=$PWD go tool cover -html=coverage.out aws-proxy
+```
+
 ## Alternate projects
 
 We aren't in the business of pushing tools, so you should also look at the
