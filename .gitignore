@@ -1,4 +1,6 @@
-/bin
-/coverage.out
+/bin/*
+!/bin/*.sh
+/build/*
+!/build/.placeholder
 /pkg
 /src/aws-proxy/aws-proxy

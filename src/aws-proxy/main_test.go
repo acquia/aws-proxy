@@ -10,7 +10,7 @@ import (
 func TestParseEndpointWithNoRegion(t *testing.T) {
 	url, err := url.Parse("https://iam.amazonws.com")
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	service, region, err := ParseEndpointUrl(url)
@@ -30,7 +30,7 @@ func TestParseEndpointWithNoRegion(t *testing.T) {
 func TestParseEndpointWithRegion(t *testing.T) {
 	url, err := url.Parse("https://dynamodb.us-west-2.amazonaws.com")
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	service, region, err := ParseEndpointUrl(url)
@@ -51,7 +51,7 @@ func TestParseEndpointWithRegion(t *testing.T) {
 func TestParseEndpointWithPrefix(t *testing.T) {
 	url, err := url.Parse("https://my-domain.us-west-2.es.amazonaws.com")
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 
 	service, region, err := ParseEndpointUrl(url)

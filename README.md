@@ -53,7 +53,7 @@ Be aware that there is some magic behind the scenes to make this possible.
 Participate in https://github.com/acquia/aws-proxy/issues/6, pull back the
 curtain, and make things less magical.
 
-##### Securing Kibana
+#### Securing Kibana
 
 You probably don't want to expose Kibana to the world, so check out
 [Bitly's Oauth2 Proxy](https://github.com/bitly/oauth2_proxy) and set the
@@ -84,11 +84,21 @@ exec /path/to/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.am
 
 AWS Proxy uses [Glide](https://glide.sh/) to manage dependencies.
 
-Run the following commands to generate a coverage report:
+#### Release builds
+
+Run the following command to build release binaries:
 
 ```shell
-GOPATH=$PWD go test -coverprofile=coverage.out aws-proxy
-GOPATH=$PWD go tool cover -html=coverage.out aws-proxy
+bin/build.sh
+```
+
+#### Tests
+
+Run the following commands to run tests and generate a coverage report:
+
+```shell
+GOPATH=$PWD go test -coverprofile=build/coverage.out aws-proxy
+GOPATH=$PWD go tool cover -html=build/coverage.out
 ```
 
 ## Alternate projects
@@ -99,4 +109,3 @@ projects below so that you can make the best decision for your use case.
 * https://github.com/coreos/aws-auth-proxy
 * https://github.com/cllunsford/aws-signing-proxy
 * https://github.com/anomalizer/ngx_aws_auth
-
