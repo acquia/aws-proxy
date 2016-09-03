@@ -15,7 +15,9 @@ library and borrows some core techniques.
 
 ## Installation
 
-Run the following command in the project's root to build the aws-proxy binary:
+Either download the [latest binary](https://github.com/acquia/aws-proxy/releases/latest)
+for your platform, or run the following command in the project's root to build
+the aws-proxy binary from source:
 
 ```shell
 GOPATH=$PWD go build -o ./bin/aws-proxy aws-proxy
