@@ -36,6 +36,7 @@ func ReverseProxy(url *url.URL, service, region string) *httputil.ReverseProxy {
 		if service == "es" && strings.HasPrefix(url.Path, "/_plugin/kibana") {
 			switch {
 			case req.URL.Path == "/_nodes":
+			case strings.HasPrefix(req.URL.Path, "/_cluster/health/.kibana-4"):
 			case strings.HasPrefix(req.URL.Path, "/.kibana-4"):
 			case strings.HasSuffix(req.URL.Path, "/_mapping/field/*"):
 			case strings.HasSuffix(req.URL.Path, "/_msearch"):
