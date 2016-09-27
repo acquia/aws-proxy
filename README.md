@@ -16,11 +16,11 @@ library and borrows some core techniques.
 ## Installation
 
 Either download the [latest binary](https://github.com/acquia/aws-proxy/releases/latest)
-for your platform, or run the following command in the project's root to build
-the aws-proxy binary from source:
+for your platform, or assuming a [correctly configured](https://golang.org/doc/install#testing)
+Go toolchain:
 
 ```shell
-GOPATH=$PWD go build -o ./bin/aws-proxy aws-proxy
+go get github.com/acquia/aws-proxy
 ```
 
 ## Usage
@@ -33,7 +33,7 @@ for more details.
 Run the proxy, replacing `my-domain` and `us-west-2` according to your environment.
 
 ```shell
-./bin/aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
+aws-proxy --port 9200 --endpoint=https://my-domain.us-west-2.es.amazonaws.com
 ```
 
 Consume the service with tools like `curl`:
@@ -48,7 +48,7 @@ If you just want to proxy Kibana and serve it from the document root, add
 the Kibana plugin's path to the endpoint:
 
 ```shell
-./bin/aws-proxy --port 5601 --endpoint=https://my-domain.us-west-2.es.amazonaws.com/_plugin/kibana
+aws-proxy --port 5601 --endpoint=https://my-domain.us-west-2.es.amazonaws.com/_plugin/kibana
 ```
 
 Be aware that there is some magic behind the scenes to make this possible.
@@ -92,15 +92,6 @@ Run the following command to build release binaries:
 
 ```shell
 bin/build.sh
-```
-
-#### Tests
-
-Run the following commands to run tests and generate a coverage report:
-
-```shell
-GOPATH=$PWD go test -coverprofile=build/coverage.out aws-proxy
-GOPATH=$PWD go tool cover -html=build/coverage.out
 ```
 
 ## Alternate projects
